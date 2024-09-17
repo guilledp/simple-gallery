@@ -16,7 +16,7 @@ This project is a web page for displaying images in a professional and visually 
 - Overlays that show a message when hovering over the image.
 - Handles broken links with an error message.
 - Images open in a new tab.
-- 
+
 ## Credits
 Guillermo Del Pup
 ChatGPT
