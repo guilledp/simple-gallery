@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Imágenes Profesional</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin-top: 40px;
+            font-size: 2rem;
+            text-align: center;
+            color: #222;
+            letter-spacing: 1px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            padding: 30px 0;
+        }
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .gallery-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.2em;
+            transition: opacity 0.3s ease;
+        }
+        .gallery-item:hover .overlay {
+            opacity: 1;
+        }
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            background-color: #222;
+            color: #f4f4f4;
+            width: 100%;
+            font-size: 0.9em;
+        }
+        .footer p {
+            margin: 0;
+        }
+        .error-text {
+            color: #888;
+            font-size: 1.1em;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Imagenes</h1>
+<div class="gallery" id="gallery"></div>
+
+<div class="footer">
+    <p>Galería creada con ❤️ by Altair</p>
+</div>
+
+<script>
+    // función para obtener el valor de un parámetro de la URL
+    function getParameterByName(name) {
+        const url = window.location.href;
+        const nameEncoded = name.replace(/[\[\]]/g, '\\$&');
+        const regex = new RegExp('[?&]' + nameEncoded + '(=([^&#]*)|&|#|$)'),
+              results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // obtiene la lista de imágenes del parámetro 'images'
+    const imageLinks = getParameterByName('images');
+
+    if (imageLinks) {
+        const images = imageLinks.split(',');
+        const gallery = document.getElementById('gallery');
+        
+        images.forEach(link => {
+            const imgElement = document.createElement('img');
+            imgElement.src = link.trim();
+
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            overlay.textContent = 'Ver Imagen';
+
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item';
+
+            // crea un enlace alrededor de la imagen
+            const linkElement = document.createElement('a');
+            linkElement.href = link.trim();
+            linkElement.target = '_blank';  // abre en una nueva pestaña
+            linkElement.appendChild(imgElement);
+            linkElement.appendChild(overlay);
+
+            // agregar evento onerror para manejar enlaces rotos
+            imgElement.onerror = function() {
+                linkElement.remove();  // elimina el enlace y el overlay si la imagen está rota
+                overlay.remove();
+                const errorText = document.createElement('div');
+                errorText.className = 'error-text';
+                errorText.textContent = 'La imagen ya no está disponible';
+                galleryItem.appendChild(errorText);
+            };
+
+            galleryItem.appendChild(linkElement);
+            gallery.appendChild(galleryItem);
+        });
+    } else {
+        const message = document.createElement('p');
+        message.style.textAlign = 'center';
+        message.style.color = '#666';
+        message.textContent = 'No se encontraron enlaces de imágenes.';
+        document.querySelector('.container').appendChild(message);
+    }
+</script>
+
+</body>
+</html>
